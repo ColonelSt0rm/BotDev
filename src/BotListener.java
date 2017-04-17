@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.Scanner;
 
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
@@ -124,17 +125,21 @@ public class BotListener extends ListenerAdapter {
 				e.getChannel().sendMessage("Text parameter required. Please try again.").complete();
 		}
 		if(rawinput.contentEquals("rl")){
+			Scanner sc = new Scanner(argument);
+			int sides = sc.nextInt();
 			if(argument.length() != 0) {
-				int out = rollDie(argument);
-				if(out == 20 && out == Integer.parseInt(argument)){
+				int out = rollDie(sides);
+				if(out == 20 && out == sides){
 					e.getChannel().sendMessage("Critical Hit!").complete();
 				}
 				else
 					e.getChannel().sendMessage(
-							e.getAuthor().getAsMention() + " rolled " + out + " on a d" + Integer.parseInt(argument)).complete();
+							e.getAuthor().getAsMention() + " rolled " + out + " on a d" + sides).complete();
 			}
 			else
 				e.getChannel().sendMessage("Side count parameter required. Please try again.").complete();
+			
+			sc.close();
 		}
 		
 	}
@@ -158,8 +163,8 @@ public class BotListener extends ListenerAdapter {
 		return out;
 	}
 	
-	private int rollDie(String argument) {
-		int sides = Integer.parseInt(argument);
+	private int rollDie(int argument) {
+		int sides = argument;
 		
 		
 		int out = rand.nextInt(sides) + 1;
