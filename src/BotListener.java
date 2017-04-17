@@ -1,3 +1,5 @@
+import java.util.Random;
+
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
@@ -6,6 +8,8 @@ public class BotListener extends ListenerAdapter {
 	private Leaderboard lb = new Leaderboard();
 	
 	private boolean debug = false;
+	
+	Random rand = new Random();
 
 	public void onMessageReceived(MessageReceivedEvent e){
 		
@@ -47,7 +51,30 @@ public class BotListener extends ListenerAdapter {
 				}
 				
 				if(e.getMessage().getRawContent().contains("MC")) {
-					e.getChannel().sendMessage("Greetings").complete();
+					String out = "";
+					if(e.getMessage().getRawContent().endsWith("?")){
+						int choice = rand.nextInt(3);
+						if(debug) {
+							out += "Got " + choice + " ";
+						}
+						switch(choice){
+						case(0):
+							out = "Negative.";
+							break;
+						case(1):
+							out = "Affirmative.";
+							break;
+						case(2):
+							out = "Uncertain.";
+							break;
+						default:
+							out = "Insufficient data for meaningful answer.";
+						}
+					}
+					else
+						out = "Greetings";
+						
+					e.getChannel().sendMessage(out).complete();
 				}
 				
 				if(e.getMessage().getRawContent().contains("I control the cubes")){
@@ -63,18 +90,23 @@ public class BotListener extends ListenerAdapter {
 				if(e.getMessage().getRawContent().startsWith("-")) {
 					getCommand(e.getMessage().getRawContent(), e);
 				}
+				
+				if(e.getMessage().getRawContent().equalsIgnoreCase("list")){
+					e.getChannel().sendMessage(printCommandList()).complete();
+				}
 			}
 		}
 	}
 	
 	public void getCommand(String input, MessageReceivedEvent e){
 		String rawinput = input.substring(1, 3);
+		String argument;
 		
-		String argument = input.substring(4, input.length());
-		
-		String suffix = input.substring(input.length()-4, input.length());
-		
-		
+		if(input.length() > 4){
+			argument = input.substring(4, input.length());
+		}
+		else
+			argument = "";
 		
 		//System.out.println(argument);
 		
@@ -84,8 +116,25 @@ public class BotListener extends ListenerAdapter {
 		}
 		
 		if(rawinput.contentEquals("bl")){
-			String newOut = buildBlueLetterString(argument);
-			e.getChannel().sendMessage(newOut).complete();
+			if(argument.length() != 0){
+				String newOut = buildBlueLetterString(argument);
+				e.getChannel().sendMessage(newOut).complete();
+			}
+			else
+				e.getChannel().sendMessage("Text parameter required. Please try again.").complete();
+		}
+		if(rawinput.contentEquals("rl")){
+			if(argument.length() != 0) {
+				int out = rollDie(argument);
+				if(out == 20 && out == Integer.parseInt(argument)){
+					e.getChannel().sendMessage("Critical Hit!").complete();
+				}
+				else
+					e.getChannel().sendMessage(
+							e.getAuthor().getAsMention() + " rolled " + out + " on a d" + Integer.parseInt(argument)).complete();
+			}
+			else
+				e.getChannel().sendMessage("Side count parameter required. Please try again.").complete();
 		}
 		
 	}
@@ -106,6 +155,29 @@ public class BotListener extends ListenerAdapter {
 				out += in.charAt(i);
 		}
 		
+		return out;
+	}
+	
+	private int rollDie(String argument) {
+		int sides = Integer.parseInt(argument);
+		
+		
+		int out = rand.nextInt(sides) + 1;
+		
+		return out;
+		
+	}
+	
+	private String printCommandList(){
+		String out = "";
+		out += ("Here is a list of the commands I know:\n");
+		out += ("'-sb'\t\t\t\t\t\t\t\t\t\tSoundboard (Nonfunctional)\n");
+		out += ("'-bl'\t\t\t\t\t\t\t\t\t\tConvert string to dank blue letters\n");
+		out += ("'-rl'\t\t\t\t\t\t\t\t\t\tRoll a die, specifying number of sides\n");
+		out += ("'I control the cubes'\t\t\t\tControl the cubes\n");
+		out += ("'leaderboard'\t\t\t\t\t\tDisplay cube leaderboard\n");
+		out += ("'list'\t\t\t\t\t\t\t\t\tDisplay this list of commands\n");
+		out += ("Adding 'MC?' to the end of a message triggers my Magic 8-Ball function\n");
 		return out;
 	}
 	

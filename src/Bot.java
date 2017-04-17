@@ -16,7 +16,7 @@ public class Bot {
 	
 	public static void main(String[] args) {
 		try {
-			jda = new JDABuilder(AccountType.BOT).addEventListener(new BotListener()).setToken(BOT_TOKEN).buildBlocking();
+			jda = new JDABuilder(AccountType.BOT).addListener(new BotListener()).setToken(BOT_TOKEN).buildBlocking();
 		} catch (LoginException | IllegalArgumentException | InterruptedException | RateLimitedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
