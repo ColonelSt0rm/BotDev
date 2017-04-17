@@ -50,7 +50,7 @@ public class BotListener extends ListenerAdapter {
 					e.getChannel().sendMessage("Greetings").complete();
 				}
 				
-				if(e.getMessage().getRawContent().contains("cubes")){
+				if(e.getMessage().getRawContent().contains("I control the cubes")){
 					lb.addUser(e.getAuthor().getName());
 					e.getChannel().sendMessage(e.getAuthor().getAsMention() + 
 							" controls the cubes. Compared to him? You are nothing.").complete();
