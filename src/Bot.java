@@ -12,6 +12,8 @@ public class Bot {
 	public static final String BOT_TOKEN = "MzAzNDAxODE5ODk4NjQyNDMz.C9XnGw.OAddH4VhyFG8FPQ2HAGOz0Qvj1c";
 	
 	
+	//Just a small change
+	
 	public static void main(String[] args) {
 		try {
 			jda = new JDABuilder(AccountType.BOT).addEventListener(new BotListener()).setToken(BOT_TOKEN).buildBlocking();
