@@ -1,8 +1,12 @@
+import java.io.File;
 import java.util.Random;
 import java.util.Scanner;
 
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.managers.AudioManager;
 
 public class BotListener extends ListenerAdapter {
 	
@@ -141,6 +145,11 @@ public class BotListener extends ListenerAdapter {
 			
 			sc.close();
 		}
+		if(rawinput.contentEquals("sy")){
+			Voice kev = new Voice("kevin16");
+			this.connectTo(e.getJDA().getVoiceChannelById(e.getChannel().getId()));
+			kev.say(argument);
+		}
 		
 	}
 	
@@ -186,5 +195,19 @@ public class BotListener extends ListenerAdapter {
 		return out;
 	}
 	
+	public FilePlayer getMyFilePlayer() {
+		return new FilePlayer(new File("tmp.wav"));
+	}
+	
+	public void connectTo(VoiceChannel channel) {
+		AudioManager manager = channel.getGuild().getAudioManager();
+		manager.openAudioConnection(channel);
+	}
+	
+	public void startPlaying(Guild guild) {
+		Player player = getMyFilePlayer();
+		guild.setSendingHandler(player);
+		player.play();
+	}
 	
 }
